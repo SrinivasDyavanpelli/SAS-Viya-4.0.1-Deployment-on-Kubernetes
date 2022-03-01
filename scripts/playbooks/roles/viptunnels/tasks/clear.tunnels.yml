@@ -1,0 +1,16 @@
+---
+
+
+- block: #Stop any existing tunnels
+  - name: delete tunnels
+    become: yes
+    shell: |
+      ip tunnel show
+      for i in `ip tunnel show | grep  "tun"  | awk -F ":" '{print $1;}'`; do echo "Removing tunnel $i"; ip link set ${i} down; ip tunnel del ${i}; done
+    register: delete
+  - debug: var=delete
+
+
+  tags:
+    - stoptunnels
+    - viptunnels

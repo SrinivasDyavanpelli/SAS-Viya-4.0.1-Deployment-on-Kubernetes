@@ -1,0 +1,12 @@
+---
+- hosts: sasnodes
+  tasks:
+  - name: Generate RKE Cluster File
+    template:
+      src: /home/cloud-user/PSGEL255-deploying-viya-4.0.1-on-kubernetes/scripts/loop/RKE_cluster.yaml.j2
+      dest: "/home/cloud-user/PSGEL255-deploying-viya-4.0.1-on-kubernetes/scripts/loop/RKE_cluster.yaml"
+    delegate_to: 127.0.0.1
+    tags:
+      - rkegen
+
+#ansible-playbook /home/cloud-user/PSGEL255-deploying-viya-4.0.1-on-kubernetes/scripts/loop/gen.rke.yaml

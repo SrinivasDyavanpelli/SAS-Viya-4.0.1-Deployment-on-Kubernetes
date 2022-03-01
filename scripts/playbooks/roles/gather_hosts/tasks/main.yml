@@ -1,0 +1,58 @@
+---
+
+- name: Grab the external hostnames
+  shell: "grep {{text_to_look_for}} {{host_file_to_read}} | {{text_to_keep}}"
+  changed_when: False
+  check_mode: no
+  register: list_of_hostnames
+  tags:
+    - gather_hosts
+
+- name: display external hostnames
+  debug: var=list_of_hostnames
+
+- name: Grab the internal hostnames
+  shell: "grep {{text_to_look_for}} {{host_file_to_read}} | {{text_to_keep}} | sed  's/sas/int/'"
+  changed_when: False
+  check_mode: no
+  register: list_of_hostnames_int
+  tags:
+    - gather_hosts
+
+- name: display internal hostnames
+  debug: var=list_of_hostnames_int
+
+
+- name: Grab the alias of the current machine
+  #shell: "hostname "
+  shell: "grep race_alias /opt/raceutils/.id.txt | awk -F'=' '{print ($2)}' | sort | uniq"
+  changed_when: False
+  check_mode: no
+  register: current_hostname
+  tags:
+    - gather_hosts
+
+- name: setting the host list
+  set_fact:
+    # ext_host_list: "{{list_of_hostnames.stdout_lines| map(attribute='myhost') | list}}"
+    ext_host_list: "{{list_of_hostnames.stdout_lines}}"
+    int_host_list: "{{list_of_hostnames_int.stdout_lines}}"
+    ext_host_list_short: "{{list_of_hostnames.stdout_lines | replace('.race.sas.com', '') }}"
+    int_host_list_short: "{{list_of_hostnames_int.stdout_lines | replace('.race.sas.com', '') }}"
+    cur_int_host:      "{{current_hostname.stdout | regex_replace('^sas','int') }} "
+    cur_ext_host:      "{{current_hostname.stdout | regex_replace('^int','sas') }}"
+  # register: ext_host_list2
+  tags:
+    - gather_hosts
+
+- debug: var=ext_host_list
+  tags:
+    - gather_hosts
+
+- debug: var=int_host_list_short
+  tags:
+    - gather_hosts
+
+- debug: var=cur_ext_host
+  tags:
+    - gather_hosts

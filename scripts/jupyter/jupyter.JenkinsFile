@@ -1,0 +1,71 @@
+pipeline {
+    agent { label 'canepg-jump'}
+    stages {
+        stage('Prepping Environment') {
+            steps {
+                echo "Running ${env.JOB_NAME} in ${env.WORKSPACE} on ${env.JENKINS_URL}"
+                cleanWs(patterns: [[pattern: '*', type: 'INCLUDE']])
+                sh 'printenv'
+            }
+        }
+
+       stage('Build Image') {
+            steps {
+
+                sh label: 'testing stuff', script: '''
+                ls -al
+                pwd
+                docker version
+                '''
+
+                sh label: 'build the image', script: '''
+                cd scripts/jupyter
+                docker image build . -f jupyter.Dockerfile -t k8s-singleuser-sample-libnuma:0.9.0
+                docker image ls -a
+
+                '''
+
+
+            }
+        }
+       stage('Validate image has libnuma ') {
+            steps {
+
+                sh label: 'val', script: '''
+                docker container run k8s-singleuser-sample-libnuma:0.9.0 bash -c 'apt list | grep libnuma | grep installed  '
+                '''
+
+                sh label: 'list all ', script: '''
+                docker container run   k8s-singleuser-sample-libnuma:0.9.0  bash -c 'ls -al /usr/lib/x86_64-linux-gnu/ | grep libnuma'
+                '''
+
+            }
+        }
+
+       stage('Push image to gelharbor ') {
+            steps {
+
+                sh label: 'login to gelharbor', script: '''
+                echo "${REG_PASS}" | docker login gelharbor.race.sas.com --username ${REG_USER}  --password-stdin
+
+                '''
+
+                sh label: 'retag and push ', script: '''
+                docker image tag k8s-singleuser-sample-libnuma:0.9.0  gelharbor.race.sas.com/jupyter/k8s-singleuser-sample-libnuma:0.9.0
+                docker image push                                     gelharbor.race.sas.com/jupyter/k8s-singleuser-sample-libnuma:0.9.0
+
+                '''
+
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo 'We are done here'
+        }
+    }
+
+}
+

@@ -1,0 +1,34 @@
+---
+config:
+    application:
+        sas.identities.providers.ldap.connection:
+            host: openldap-service.ldap-basic.svc.cluster.local
+            port: 389
+            url: ldap://\${sas.identities.providers.ldap.connection.host}:\${sas.identities.providers.ldap.connection.port}
+            userDN: cn=admin,dc=gelrace,dc=com
+            password: lnxsas
+         sas.identities.providers.ldap.group:
+            accountId: 'cn'
+            baseDN: 'dc=gelrace,dc=com'
+            createdDate: 'createTimestamp'
+            distinguishedName: 'distinguishedName'
+            member: 'uniqueMember'
+            modifiedDate: 'modifyTimestamp'
+            objectClass: 'groupOfNames'
+            objectFilter: '(objectClass=groupOfNames)'
+            searchFilter: '\${sas.identities.providers.ldap.group.accountId}={0}'
+        sas.identities.providers.ldap.user:
+            accountId: 'uid'
+            baseDN: 'dc=gelrace,dc=com'
+            createdDate: 'createTimestamp'
+            distinguishedName: 'distinguishedName'
+            memberOf: 'memberOf'
+            modifiedDate: 'modifyTimestamp'
+            objectClass: 'inetOrgPerson'
+            objectFilter: '(objectClass=inetOrgPerson)'
+            searchFilter: '\${sas.identities.providers.ldap.user.accountId}={0}'
+        sas.identities:
+            administrator: 'sasadm'
+        sas.logon.initial:
+            user: sasboot
+            password: lnxsas

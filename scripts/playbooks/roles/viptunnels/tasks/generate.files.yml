@@ -1,0 +1,68 @@
+---
+## generate all the remote files from templates
+- name: ensure folder exists
+  become: yes
+  file:
+    dest: "{{VirtualTunnel_folder}}"
+    mode: 0755
+    owner: root
+    group: root
+    state: directory
+  tags:
+    - generatefiles
+    - viptunnels
+
+- name: create tunnel file from template
+  become: yes
+  template:
+    src: VirtualTunnel.template.j2
+    dest: "{{VirtualTunnel_filename}}"
+    mode: 0755
+  tags:
+    - generatefiles
+    - viptunnels
+
+- name: display the tunnel file
+  become: yes
+  shell: "cat {{VirtualTunnel_filename}}"
+  register: my_tunnel
+  tags:
+    - generatefiles
+    - viptunnels
+- debug: var=my_tunnel
+  tags:
+    - generatefiles
+    - viptunnels
+
+
+
+- name: create tunnelservice file from template
+  become: yes
+  template:
+    src: VirtualTunnel.service.j2
+    dest: "{{VirtualTunnelService_filename}}"
+    mode: 0644
+  tags:
+    - generatefiles
+    - viptunnels
+
+- name: create the tunnel content to be added to the hosts file
+  become: yes
+  template:
+    src: int.hosts.j2
+    dest: "/tmp/hosts.txt"
+    mode: 0755
+  tags:
+    - generatefiles
+    - viptunnels
+
+- name: display the tunnel content
+  shell: "cat /tmp/hosts.txt"
+  register: my_hosts
+  tags:
+    - generatefiles
+    - viptunnels
+- debug: var=my_hosts
+  tags:
+    - generatefiles
+    - viptunnels

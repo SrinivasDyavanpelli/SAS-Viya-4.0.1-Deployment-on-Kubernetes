@@ -1,0 +1,91 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openldap-server
+  labels:
+    app: openldap-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openldap-server
+  template:
+    metadata:
+      labels:
+        app: openldap-server
+    spec:
+      containers:
+        - name: openldap-server
+          image: osixia/openldap:stable
+          imagePullPolicy: IfNotPresent
+          args:
+            - --copy-service
+          volumeMounts:
+            - name: openldap-volume
+              mountPath: /container/service/slapd/assets/config/bootstrap/ldif/custom/bootstrap.ldif
+              subPath: bootstrap.ldif
+            - name: openldap-volume-overlay
+              mountPath: /container/service/slapd/assets/config/bootstrap/ldif/03-memberOf.ldif
+              subPath: 03-memberOf.ldif
+            - name: ldap-data
+              mountPath: /var/lib/ldap
+            - name: ldap-config
+              mountPath: /etc/ldap/slapd.d
+            - name: ldap-certs
+              mountPath: /container/service/slapd/assets/certs
+          ports:
+            - containerPort: 389
+              name: openldap
+            - containerPort: 636
+              name: openldaps
+          env:
+            - name: LDAP_TLS
+              value: "false"
+            - name: LDAP_ORGANISATION
+              value: "GELCORP"
+            - name: LDAP_DOMAIN
+              value: "gelrace.com"
+            - name: LDAP_ADMIN_PASSWORD
+              value: "lnxsas"
+            - name: LDAP_CONFIG_PASSWORD
+              value: "lnxsas"
+            - name: LDAP_READONLY_USER
+              value: "false"
+            - name: LDAP_REMOVE_CONFIG_AFTER_SETUP
+              value: "false"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 500Mi
+            requests:
+              cpu: 50m
+              memory: 50Mi
+      volumes:
+        - name: openldap-volume
+          configMap:
+            name: openldap-bootstrap
+        - name: openldap-volume-overlay
+          configMap:
+            name: openldap-memberof-overlay
+        - name: ldap-data
+          emptyDir: {}
+        - name: ldap-config
+          emptyDir: {}
+        - name: ldap-certs
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: openldap-service
+  name: openldap-service
+spec:
+  ports:
+    - name: openldap-insecure-port
+      port: 389
+      targetPort: 389
+      protocol: TCP
+  selector:
+    app: openldap-server

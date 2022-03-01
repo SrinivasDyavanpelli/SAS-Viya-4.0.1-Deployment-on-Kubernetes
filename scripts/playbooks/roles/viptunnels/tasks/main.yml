@@ -1,0 +1,6 @@
+---
+- include: disable.os.firewalls.yml
+- include: generate.files.yml
+- include: clear.tunnels.yml
+- include: redefine.tunnels.yml
+- include: enable.keepalive.yml

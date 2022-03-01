@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: openldap-service
+  name: openldap-service
+spec:
+  ports:
+    - name: openldap-insecure-port
+      port: 389
+      targetPort: 389
+      protocol: TCP
+  selector:
+    app: openldap-server

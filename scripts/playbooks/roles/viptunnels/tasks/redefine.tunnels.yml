@@ -1,0 +1,75 @@
+---
+
+- name: Update tunnel info in /etc/hosts and display result
+  become: yes
+  shell: |
+    sed -i '/192/d' /etc/hosts
+    sed -i '/GEL/d' /etc/hosts
+    cat /tmp/hosts.txt /etc/hosts > /etc/hosts.new
+    cp -p /etc/hosts /etc/hosts.back
+    cat /etc/hosts.new
+    cp -p /etc/hosts.new /etc/hosts
+    rm -rf /tmp/hosts.txt
+  register: update_hosts
+  tags:
+    - viptunnels
+
+- debug: var=update_hosts
+
+
+- block: #Restart all tunnels
+  - name: restart networking stack
+    become: yes
+    service:
+      name: network
+      state: restarted
+    register: restart
+    any_errors_fatal: yes
+    tags:
+      - viptunnels
+
+  - name: re-create tunnels
+    become: yes
+    shell: |
+      {{VirtualTunnel_filename}}
+    register: createtunnels
+    tags:
+      - viptunnels
+  # - debug: var=createtunnels
+  - name: define services
+    become: yes
+    shell: |
+      /usr/bin/systemctl enable {{VirtualTunnelService_filename}}
+    register: defineservice
+    tags:
+      - restart
+      - viptunnels
+
+  - debug: var=defineservice
+
+
+  tags:
+    - restarttunnels
+
+- block: #test that all tunnels are working
+  - name: ping the hosts
+    shell: "ping -c 2 {{item}}"
+    with_items:
+      - "{{int_host_list}}"
+    register: pinged
+    any_errors_fatal: yes
+  #   ignore_errors: true
+  # - debug: var=pinged
+    tags:
+      - test
+      - viptunnels
+  - name: ssh to the the hosts and validate hostname
+    shell: "ssh {{item}} -o StrictHostKeyChecking=no  hostname"
+    with_items:
+      - "{{int_host_list}}"
+    register: ssh_hostname
+    any_errors_fatal: yes
+    # ignore_errors: true
+  # - debug: var=ssh_hostname
+  tags:
+    - tunneltest

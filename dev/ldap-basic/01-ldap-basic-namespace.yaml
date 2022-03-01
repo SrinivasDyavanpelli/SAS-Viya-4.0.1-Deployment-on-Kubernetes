@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ldap-basic
+  labels:
+    name: "Namespace_For_basic_LDAP_work"

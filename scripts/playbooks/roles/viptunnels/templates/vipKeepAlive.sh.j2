@@ -1,0 +1,85 @@
+# VIP Tunnel (and Network Service) Keepalive
+# -------------------------------------------------------------------
+# In AWS, the GRE tunnels we're using appear to have a lifespan
+# of about 10 minutes. So ping them regularly to keep them alive.
+#
+# Secondly, in RACE we occassionally see machines go "dead" due to
+# loss of IPv4 address for the "eth0" interface. If so, then this
+# script will also restart the "network" service to recover.
+#
+# Launch crontab editor:
+#    crontab -e
+#
+# And insert line:
+#    */1 * * * *  /path/to/vipKeepAlive.sh      # pings VIP tunnels every minute
+#
+# -------------------------------------------------------------------
+#
+
+# KEEP VIP TUNNELS ALIVE
+# -------------------------------------------------------------------
+
+# Find all 192.168.x.x in the /etc/hosts
+allvip=`getent hosts | grep 192.168 | awk '{print $1}'`
+echo "`date`: VIP Tunnel Keepalive" > /tmp/vipka.out
+# Ping each 192.168.x.x
+for v in $allvip;
+  do ping $v -c 1 -W 1 >/dev/null 2>&1;
+  rc=$?;
+
+  if [ $rc -ne 0 ];
+    then echo "`date`: ERROR: $v ping rc=$rc" >> /tmp/vipka.out;
+  fi;
+done;
+
+
+# KEEP IPv4 ALIVE
+# looking for the output from: ifconfig eth0
+# --
+# eth0:   flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+#         inet 10.96.7.44  netmask 255.255.0.0  broadcast 10.96.255.255
+#         inet6 fe80::250:56ff:feb0:c73d  prefixlen 64  scopeid 0x20<link>
+#         ether 00:50:56:b0:c7:3d  txqueuelen 1000  (Ethernet)
+#         RX packets 3975884  bytes 1014058738 (967.0 MiB)
+#         RX errors 0  dropped 0  overruns 0  frame 0
+#         TX packets 57090  bytes 6187611 (5.9 MiB)
+#         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+# --
+# The "inet" line shows the IPv4 interface. In RACE, we've seen this
+# arbitrarily disappear. Then the machine status shows as DEAD. The fix
+# is to restart the network service.
+# --------------------------------------------------------------------
+
+# Grab the 1st word from the 2nd line from "ifconfig eth0"
+ipv4test=`/usr/sbin/ifconfig eth0 2>&1 | head -2 | tail -1 | awk -F' ' '{print $1}'`
+flagfile="/tmp/vipka-ipv4.out"
+today="`date +"%d"`"
+
+if [ "$ipv4test" != "inet" ]                  # if the IPv4 interface is not found
+then
+
+    if [ -s "$flagfile" ]                     # does the flag file already exist?
+    then
+        flagdate=`cat $flagfile | head -1`    # get the date it's remembering (1-31)
+
+        if [ "$today" -eq "$flagdate" ]       # don't restart network more than 1/day
+        then
+            echo "`date`: Network appears down again - not restarting until tomorrow." >> $flagfile
+            exit
+        else                                  # it is tomorrow now
+            mv $flagfile $flagfile.$flagdate  # rename the file for posterity
+        fi
+
+    fi
+
+                                              # create new flag file for today
+    echo "$today" >> $flagfile                # put today's date (1-31) as flag
+    echo "--" >> $flagfile
+    /usr/sbin/ifconfig eth0 >> $flagfile      # log the error condition
+    echo "--" >> $flagfile
+    echo "`date`: Restarting the network service" >> $flagfile
+
+    /usr/bin/systemctl restart network        # restart the network service
+    /usr/bin/sleep 5                          # brief pause to ensure NFS is attached
+
+fi

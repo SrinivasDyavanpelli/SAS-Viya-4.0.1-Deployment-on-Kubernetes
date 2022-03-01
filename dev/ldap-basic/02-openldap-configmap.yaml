@@ -1,0 +1,792 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openldap-bootstrap
+data:
+  bootstrap.ldif: |
+    version: 1
+
+    # dn: dc=gelrace,dc=com
+    # objectClass: dcObject
+    # objectClass: organization
+    # dc: gelrace
+    # o: Demo_Org
+
+    dn: ou=users,dc=gelrace,dc=com
+    objectClass: organizationalUnit
+    objectClass: top
+    ou: users
+
+    dn: ou=groups,dc=gelrace,dc=com
+    objectClass: organizationalUnit
+    objectClass: top
+    ou: groups
+
+    dn: uid=sasldap,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    objectClass: person
+    cn: sasldap
+    sn: LDAP
+    displayName: SAS LDAP Service Account
+    givenName: SAS
+    l: Cary
+    mail: sasldap@none.sas.com
+    o: GELCorp
+    uid: sasldap
+    userPassword: lnxsas
+
+    dn: cn=sasldap,ou=groups,dc=gelrace,dc=com
+    objectClass: groupOfNames
+    objectClass: top
+    objectClass: extensibleObject
+    cn: sasldap
+    member: uid=sasldap,ou=users,dc=gelrace,dc=com
+    description: SAS LDAP Service Accounts
+    displayName: SAS LDAP Service Accounts
+    name: SASLDAP
+    o:: SVQg
+
+    dn: uid=sas,ou=users,dc=gelrace,dc=com
+    objectClass: posixAccount
+    objectClass: organizationalPerson
+    objectClass: inetOrgPerson
+    objectClass: top
+    cn: sas
+    gidNumber: 1001
+    homeDirectory: /home/sas
+    sn: System Account
+    uid: sas
+    uidNumber: 1001
+    displayName: SAS System Account
+    givenName: SAS
+    l: Cary
+    loginShell: /bin/bash
+    mail: sas@none.sas.com
+    o: GELCorp
+    userPassword: {SSHA}BcXbRL950jyqbBLvSOKxwXmkZaqIj8r7
+
+    dn: uid=cas,ou=users,dc=gelrace,dc=com
+    objectClass: posixAccount
+    objectClass: organizationalPerson
+    objectClass: inetOrgPerson
+    objectClass: top
+    cn: cas
+    gidNumber: 1002
+    homeDirectory: /home/cas
+    sn: Installer
+    uid: cas
+    uidNumber: 1001
+    displayName: CAS System Account
+    givenName: CAS
+    l: Cary
+    loginShell: /bin/bash
+    mail: cas@none.sas.com
+    o: GELCorp
+    userPassword: {SSHA}BcXbRL950jyqbBLvSOKxwXmkZaqIj8r7
+
+    dn: cn=sas,ou=groups,dc=gelrace,dc=com
+    objectClass: extensibleObject
+    objectClass: top
+    objectClass: groupOfNames
+    cn: sas
+    member: uid=sas,ou=users,dc=gelrace,dc=com
+    member: uid=cas,ou=users,dc=gelrace,dc=com
+    displayName: SAS
+    gidNumber: 1001
+    memberUid: sas
+    memberUid: cas
+    name: SAS
+    o:: SVQg
+
+    dn: cn=cas,ou=groups,dc=gelrace,dc=com
+    objectClass: extensibleObject
+    objectClass: top
+    objectClass: groupOfNames
+    cn: cas
+    member: uid=cas,ou=users,dc=gelrace,dc=com
+    displayName: CAS
+    gidNumber: 1002
+    memberUid: cas
+    name: CAS
+    o:: SVQg
+
+    dn: uid=sasadm,ou=users,dc=gelrace,dc=com
+    objectClass: posixAccount
+    objectClass: organizationalPerson
+    objectClass: inetOrgPerson
+    objectClass: top
+    cn: sasadm
+    gidNumber: 2002
+    homeDirectory: /home/sasadm
+    sn: Admin
+    uid: sasadm
+    uidNumber: 2002
+    displayName: SAS Administrator
+    givenName: SAS
+    l: Cary
+    loginShell: /bin/bash
+    mail: sasadm@none.sas.com
+    o: GELCorp
+    userPassword: {SSHA}BcXbRL950jyqbBLvSOKxwXmkZaqIj8r7
+
+    dn: uid=sastest1,ou=users,dc=gelrace,dc=com
+    objectClass: posixAccount
+    objectClass: organizationalPerson
+    objectClass: inetOrgPerson
+    objectClass: top
+    cn: sastest1
+    gidNumber: 2003
+    homeDirectory: /home/sastest1
+    sn: Test User 1
+    uid: sastest1
+    uidNumber: 2003
+    displayName: SAS Test User 1
+    givenName: SAS
+    l: Cary
+    loginShell: /bin/bash
+    mail: sastest1@none.sas.com
+    o: GELCorp
+    userPassword: {SSHA}BcXbRL950jyqbBLvSOKxwXmkZaqIj8r7
+
+    dn: uid=sastest2,ou=users,dc=gelrace,dc=com
+    objectClass: posixAccount
+    objectClass: organizationalPerson
+    objectClass: inetOrgPerson
+    objectClass: top
+    cn: sastest2
+    gidNumber: 2003
+    homeDirectory: /home/sastest2
+    sn: Test User 2
+    uid: sastest2
+    uidNumber: 2004
+    displayName: SAS Test User 2
+    givenName: SAS
+    l: Cary
+    loginShell: /bin/bash
+    mail: sastest2@none.sas.com
+    o: GELCorp
+    userPassword: {SSHA}BcXbRL950jyqbBLvSOKxwXmkZaqIj8r7
+
+    dn: cn=sasadmins,ou=groups,dc=gelrace,dc=com
+    objectClass: extensibleObject
+    objectClass: top
+    objectClass: groupOfNames
+    cn: sasadmins
+    member: uid=sasadm,ou=users,dc=gelrace,dc=com
+    member: uid=sas,ou=users,dc=gelrace,dc=com
+    member: uid=geladm,ou=users,dc=gelrace,dc=com
+    displayName: IT Admins
+    gidNumber: 2002
+    memberUid: sasadm
+    memberUid: sas
+    memberUid: geladm
+    name: SASAdmins
+    o:: SVQg
+
+    dn: cn=sasusers,ou=groups,dc=gelrace,dc=com
+    objectClass: extensibleObject
+    objectClass: top
+    objectClass: groupOfNames
+    cn: sasusers
+    member: uid=sasadm,ou=users,dc=gelrace,dc=com
+    member: uid=sastest1,ou=users,dc=gelrace,dc=com
+    member: uid=sastest2,ou=users,dc=gelrace,dc=com
+    member: uid=sas,ou=users,dc=gelrace,dc=com
+    member: uid=geladm,ou=users,dc=gelrace,dc=com
+    member: cn=gelcorp,ou=groups,dc=gelrace,dc=com
+    displayName: SAS Users
+    gidNumber: 2003
+    memberUid: sasadm
+    memberUid: sastest1
+    memberUid: sastest2
+    memberUid: sas
+    memberUid: geladm
+    name: SASUsers
+
+    dn: uid=geladm,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    objectClass: posixAccount
+    cn: geladm
+    gidNumber: 2002
+    homeDirectory: /home/geladm
+    sn: geladm
+    uid: geladm
+    uidNumber: 4000
+    displayName: geladm
+    employeeNumber: P301
+    l: Cary
+    loginShell: /bin/bash
+    mail: geladm@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Platform Administrator
+    userPassword: lnxsas
+
+    dn: uid=Ahmed,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    objectClass: posixAccount
+    cn: Ahmed
+    gidNumber: 2003
+    homeDirectory: /home/Ahmed
+    sn: Ahmed
+    uid: Ahmed
+    uidNumber: 4005
+    displayName: Ahmed
+    employeeNumber: P301
+    l: Cary
+    loginShell: /bin/bash
+    mail: Ahmed@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Platform Administrator
+    userPassword: lnxsas
+
+    dn: uid=Amanda,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    objectClass: posixAccount
+    cn: Amanda
+    gidNumber: 2003
+    homeDirectory: /home/Amanda
+    sn: Amanda
+    uid: Amanda
+    uidNumber: 4004
+    displayName: Amanda
+    employeeNumber: P302
+    l: Cary
+    loginShell: /bin/bash
+    mail: Amanda@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Platform Administrator
+    userPassword: lnxsas
+
+    dn: uid=Alex,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    objectClass: posixAccount
+    cn: Alex
+    gidNumber: 2003
+    homeDirectory: /home/Alex
+    sn: Alex
+    uid: Alex
+    uidNumber: 4003
+    displayName: Alex
+    employeeNumber: P302
+    l: Cary
+    loginShell: /bin/bash
+    mail: Alex@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Content Administrator
+    userPassword: lnxsas
+
+    dn: uid=Hugh,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Hugh
+    sn: Hugh
+    displayName: Hugh
+    employeeNumber: P201
+    l: Cary
+    mail: Hugh@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Business Analyst
+    uid: Hugh
+    userPassword: lnxsas
+
+    dn: uid=Hamish,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Hamish
+    sn: Hamish
+    displayName: Hamish
+    employeeNumber: P202
+    l: Cary
+    mail: Hamish@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Business Analyst
+    uid: Hamish
+    userPassword: lnxsas
+
+    dn: uid=Shannon,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Shannon
+    sn: Shannon
+    displayName: Shannon
+    employeeNumber: P203
+    l: Cary
+    mail: Shannon@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Business Analyst
+    uid: Shannon
+    userPassword: lnxsas
+
+    dn: uid=Heather,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Heather
+    sn: Heather
+    displayName: Heather
+    employeeNumber: P204
+    l: Cary
+    mail: Heather@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Business Analyst
+    uid: Heather
+    userPassword: lnxsas
+
+    dn: uid=Sasha,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Sasha
+    sn: Sasha
+    displayName: Sasha
+    employeeNumber: P205
+    l: Cary
+    mail: Sasha@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Business Analyst
+    uid: Sasha
+    userPassword: lnxsas
+
+    dn: uid=Sean,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Sean
+    sn: Sean
+    displayName: Sean
+    employeeNumber: P206
+    l: Cary
+    mail: Sean@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Business Analyst
+    uid: Sean
+    userPassword: lnxsas
+
+    dn: uid=Santiago,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Santiago
+    sn: Santiago
+    displayName: Santiago
+    employeeNumber: P207
+    l: Cary
+    mail: Santiago@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Business User
+    uid: Santiago
+    userPassword: lnxsas
+
+    dn: uid=Henrik,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Henrik
+    sn: Henrik
+    displayName: Henrik
+    employeeNumber: P208
+    l: Cary
+    mail: Henrik@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Business User
+    uid: Henrik
+    userPassword: lnxsas
+
+    dn: uid=Sheldon,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Sheldon
+    sn: Sheldon
+    displayName: Sheldon
+    employeeNumber: P209
+    l: Cary
+    mail: Sheldon@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Business User
+    uid: Sheldon
+    userPassword: lnxsas
+
+    dn: uid=Hazel,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Hazel
+    sn: Hazel
+    displayName: Hazel
+    employeeNumber: P210
+    l: Cary
+    mail: Hazel@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Business User
+    uid: Hazel
+    userPassword: lnxsas
+
+    dn: uid=Sarah,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Sarah
+    sn: Sarah
+    displayName: Sarah
+    employeeNumber: P211
+    l: Cary
+    mail: Sarah@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Business User
+    uid: Sarah
+    userPassword: lnxsas
+
+    dn: uid=Fay,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Fay
+    sn: Fay
+    displayName: Fay
+    employeeNumber: P212
+    l: Cary
+    mail: Fay@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Business User
+    uid: Fay
+    userPassword: lnxsas
+
+    dn: uid=Fernanda,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Fernanda
+    sn: Fernanda
+    displayName: Fernanda
+    employeeNumber: P213
+    l: Cary
+    mail: Fernanda@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Application Developer
+    uid: Fernanda
+    userPassword: lnxsas
+
+    dn: uid=Frank,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Frank
+    sn: Frank
+    displayName: Frank
+    employeeNumber: P214
+    l: Cary
+    mail: Frank@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Application Developer
+    uid: Frank
+    userPassword: lnxsas
+
+    dn: uid=Fred,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Fred
+    sn: Fred
+    displayName: Fred
+    employeeNumber: P215
+    l: Cary
+    mail: Fred@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Application Developer
+    uid: Fred
+    userPassword: lnxsas
+
+    dn: uid=Fiona,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Fiona
+    sn: Fiona
+    displayName: Fiona
+    employeeNumber: P216
+    l: Cary
+    mail: Fiona@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Application Developer
+    uid: Fiona
+    userPassword: lnxsas
+
+    dn: uid=Sophia,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Sophia
+    sn: Sophia
+    displayName: Sophia
+    employeeNumber: P219
+    l: Cary
+    mail: Sophia@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Manager
+    uid: Sophia
+    userPassword: lnxsas
+
+    dn: uid=Sebastian,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Sebastian
+    sn: Sebastian
+    displayName: Sebastian
+    employeeNumber: P219
+    l: Cary
+    mail: Sebastian@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Data Scientist
+    uid: Sebastian
+    userPassword: lnxsas
+
+    dn: uid=Helena,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Helena
+    sn: Helena
+    displayName: Helena
+    employeeNumber: P219
+    l: Cary
+    mail: Helena@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Manager
+    uid: Helena
+    userPassword: lnxsas
+
+    dn: uid=Douglas,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: inetOrgPerson
+    objectClass: posixAccount
+    objectClass: organizationalPerson
+    cn: Douglas
+    gidNumber: 2003
+    homeDirectory: /home/Douglas
+    sn: Douglas
+    uid: Douglas
+    uidNumber: 4001
+    displayName: Douglas
+    employeeNumber: P217
+    l: Cary
+    loginShell: /bin/bash
+    mail: Douglas@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Data Manager (Sales)
+    userPassword: lnxsas
+
+    dn: uid=Delilah,ou=users,dc=gelrace,dc=com
+    objectClass: top
+    objectClass: posixAccount
+    objectClass: inetOrgPerson
+    objectClass: organizationalPerson
+    cn: Delilah
+    gidNumber: 2003
+    homeDirectory: /home/Delilah
+    sn: Delilah
+    uid: Delilah
+    uidNumber: 4002
+    displayName: Delilah
+    employeeNumber: P218
+    l: Cary
+    loginShell: /bin/bash
+    mail: Delilah@gelcorp.com
+    o:: R0VMQ29ycCAg
+    title: Data Manager (HR)
+    userPassword: lnxsas
+
+    dn: cn=HR,ou=groups,dc=gelrace,dc=com
+    objectClass: extensibleObject
+    objectClass: groupOfNames
+    objectClass: top
+    cn: HR
+    member: uid=Hugh,ou=users,dc=gelrace,dc=com
+    member: uid=Heather,ou=users,dc=gelrace,dc=com
+    member: uid=Henrik,ou=users,dc=gelrace,dc=com
+    member: uid=Hazel,ou=users,dc=gelrace,dc=com
+    member: uid=Helena,ou=users,dc=gelrace,dc=com
+    member: uid=Hamish,ou=users,dc=gelrace,dc=com
+    member: uid=Delilah,ou=users,dc=gelrace,dc=com
+    member: uid=cas,ou=users,dc=gelrace,dc=com
+    member: uid=sasadm,ou=users,dc=gelrace,dc=com
+    member: uid=geladm,ou=users,dc=gelrace,dc=com
+    displayName:: SFIg
+    gidNumber: 3001
+    memberUid: Delilah
+    memberUid: cas
+    memberUid: sasadm
+    memberUid: geladm
+    name: HR
+    o:: R0VMQ29ycCAg
+
+    dn: cn=Sales,ou=groups,dc=gelrace,dc=com
+    objectClass: extensibleObject
+    objectClass: groupOfNames
+    objectClass: top
+    cn: Sales
+    member: uid=Sebastian,ou=users,dc=gelrace,dc=com
+    member: uid=Sean,ou=users,dc=gelrace,dc=com
+    member: uid=Santiago,ou=users,dc=gelrace,dc=com
+    member: uid=Sheldon,ou=users,dc=gelrace,dc=com
+    member: uid=Sarah,ou=users,dc=gelrace,dc=com
+    member: uid=Sophia,ou=users,dc=gelrace,dc=com
+    member: uid=Sasha,ou=users,dc=gelrace,dc=com
+    member: uid=Shannon,ou=users,dc=gelrace,dc=com
+    member: uid=Douglas,ou=users,dc=gelrace,dc=com
+    member: uid=cas,ou=users,dc=gelrace,dc=com
+    member: uid=sasadm,ou=users,dc=gelrace,dc=com
+    member: uid=geladm,ou=users,dc=gelrace,dc=com
+    displayName: Sales
+    gidNumber: 3003
+    memberUid: Douglas
+    memberUid: cas
+    memberUid: sasadm
+    memberUid: geladm
+    name: Sales
+    o:: R0VMQ29ycCAg
+
+    dn: cn=Finance,ou=groups,dc=gelrace,dc=com
+    objectClass: extensibleObject
+    objectClass: groupOfNames
+    objectClass: top
+    cn: Finance
+    member: uid=Fernanda,ou=users,dc=gelrace,dc=com
+    member: uid=Fiona,ou=users,dc=gelrace,dc=com
+    member: uid=Fay,ou=users,dc=gelrace,dc=com
+    member: uid=Frank,ou=users,dc=gelrace,dc=com
+    member: uid=Fred,ou=users,dc=gelrace,dc=com
+    member: uid=geladm,ou=users,dc=gelrace,dc=com
+    member: uid=cas,ou=users,dc=gelrace,dc=com
+    member: uid=sasadm,ou=users,dc=gelrace,dc=com
+    displayName: Finance
+    gidNumber: 3004
+    memberUid: geladm
+    memberUid: cas
+    memberUid: sasadm
+    name: Finance
+    o:: R0VMQ29ycCAg
+
+    dn: cn=Managers,ou=groups,dc=gelrace,dc=com
+    objectClass: extensibleObject
+    objectClass: groupOfNames
+    objectClass: top
+    cn: Managers
+    member: uid=Helena,ou=users,dc=gelrace,dc=com
+    member: uid=Sophia,ou=users,dc=gelrace,dc=com
+    displayName: Managers
+    gidNumber: 3002
+    memberUid: Helena
+    memberUid: Sophia
+    name: Managers
+    o:: R0VMQ29ycCAg
+
+    dn: cn=gelcorp,ou=groups,dc=gelrace,dc=com
+    objectClass: extensibleObject
+    objectClass: groupOfNames
+    objectClass: top
+    cn: gelcorp
+    member: cn=HR,ou=groups,dc=gelrace,dc=com
+    member: cn=Sales,ou=groups,dc=gelrace,dc=com
+    member: cn=Managers,ou=groups,dc=gelrace,dc=com
+    member: cn=sasadmins,ou=groups,dc=gelrace,dc=com
+    member: cn=Finance,ou=groups,dc=gelrace,dc=com
+    member: cn=GELCorpContentAdmins,ou=groups,dc=gelrace,dc=com
+    member: cn=GELCorpSystemAdmins,ou=groups,dc=gelrace,dc=com
+    displayName: All GELCORP Users
+    gidNumber: 3000
+    name: gelcorp
+    o:: R0VMQ29ycCAg
+
+    dn: cn=GELCorpContentAdmins,ou=groups,dc=gelrace,dc=com
+    objectClass: extensibleObject
+    objectClass: groupOfNames
+    objectClass: top
+    cn: GELCorpContentAdmins
+    member: uid=Alex,ou=users,dc=gelrace,dc=com
+    displayName: GELCorp Content Admins
+    gidNumber: 3005
+    memberUid: Alex
+    name: GELCorpContentAdmins
+    o:: R0VMQ29ycCAg
+
+    dn: cn=GELCorpSystemAdmins,ou=groups,dc=gelrace,dc=com
+    objectClass: extensibleObject
+    objectClass: groupOfNames
+    objectClass: top
+    cn: GELCorpSystemAdmins
+    member: uid=Ahmed,ou=users,dc=gelrace,dc=com
+    member: uid=Amanda,ou=users,dc=gelrace,dc=com
+    member: uid=sasadm,ou=users,dc=gelrace,dc=com
+    member: uid=geladm,ou=users,dc=gelrace,dc=com
+    displayName: GELCorp System Admins
+    gidNumber: 3006
+    memberUid: Ahmed
+    memberUid: Amanda
+    memberUid: sasadm
+    memberUid: geladm
+    name: GELCorpSystemAdmins
+    o:: R0VMQ29ycCAg
+
+    dn: cn=powerusers,ou=groups,dc=gelrace,dc=com
+    objectClass: extensibleObject
+    objectClass: groupOfNames
+    objectClass: top
+    cn: powerusers
+    member: uid=Ahmed,ou=users,dc=gelrace,dc=com
+    member: uid=Amanda,ou=users,dc=gelrace,dc=com
+    member: uid=sasadm,ou=users,dc=gelrace,dc=com
+    member: uid=Delilah,ou=users,dc=gelrace,dc=com
+    member: uid=Douglas,ou=users,dc=gelrace,dc=com
+    member: uid=geladm,ou=users,dc=gelrace,dc=com
+    displayName: GELCorp Power Users
+    gidNumber: 3007
+    memberUid: Ahmed
+    memberUid: Amanda
+    memberUid: sasadm
+    memberUid: Delilah
+    memberUid: Douglas
+    memberUid: geladm
+    name: powerusers
+    o:: R0VMQ29ycCAg
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openldap-memberof-overlay
+data:
+  03-memberOf.ldif: |
+    # Load memberof module
+    dn: cn=module{0},cn=config
+    changetype: modify
+    add: olcModuleLoad
+    olcModuleLoad: memberof
+
+    # Backend memberOf overlay
+    dn: olcOverlay={0}memberof,olcDatabase={1}{{ LDAP_BACKEND }},cn=config
+    changetype: add
+    objectClass: olcOverlayConfig
+    objectClass: olcMemberOf
+    olcOverlay: {0}memberof
+    olcMemberOfDangling: ignore
+    olcMemberOfRefInt: TRUE
+    olcMemberOfGroupOC: groupOfNames
+    olcMemberOfMemberAD: member
+    olcMemberOfMemberOfAD: memberOf
+

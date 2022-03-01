@@ -1,0 +1,53 @@
+---
+- block:
+  ## block start
+
+  ## on RHEL 7, we make sure that firewalld is disabled and stopped
+  - name: Check if firewalld exists
+    stat: path=/usr/lib/systemd/system/firewalld.service
+    register: firewall_status
+    tags:
+      - prereq
+      - firewall
+      - viptunnels
+
+  - name: Disable firewalld (on RHEL 7)
+    become: yes
+    service:
+      name=firewalld
+      enabled=no
+      state=stopped
+    when: ansible_distribution_major_version == '7' and firewall_status.stat.exists
+    tags:
+      - prereq
+      - firewall
+      - viptunnels
+
+  ## on RHEL 6, we deal with iptables and iptables6
+  - name: Disable iptables (on RHEL 6)
+    become: yes
+    service:
+      name=iptables
+      enabled=no
+      state=stopped
+    when: ansible_distribution_major_version == '6'
+    ignore_errors: yes
+    tags:
+      - prereq
+      - firewall
+      - viptunnels
+
+  - name: Disable ip6tables (on RHEL 6)
+    become: yes
+    service:
+      name=ip6tables
+      enabled=no
+      state=stopped
+    when: ansible_distribution_major_version == '6'
+    ignore_errors: yes
+
+   ## block end
+  tags:
+    - prereq
+    - os_firewall_config
+    - viptunnels

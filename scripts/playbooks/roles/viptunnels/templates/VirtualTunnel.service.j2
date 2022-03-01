@@ -1,0 +1,11 @@
+[Unit]
+Description=GEL Script to setup virtual tunnels
+After=network.target sims.service WaitForSims.service
+
+[Service]
+Type=oneshot
+#ExecStart=/opt/RACE_Integration/VirtualTunnel
+ExecStart={{VirtualTunnel_folder}}/VirtualTunnel
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,70 @@
+### Installing the runner on CentOS:
+##  curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh | sudo bash
+## sudo yum install gitlab-runner -y
+
+## register it:
+## sudo gitlab-runner register
+## https://gitlab.sas.com/
+## q6zoMq1o-KQ3ytMFSFL2
+
+# sudo gitlab-runner register \
+#   --non-interactive \
+#   --url "https://gitlab.sas.com/" \
+#   --registration-token "q6zoMq1o-KQ3ytMFSFL2" \
+#   --executor "shell" \
+#   --docker-image alpine:latest \
+#   --description "docker-runner" \
+#   --tag-list "docker,aws" \
+#   --run-untagged="true" \
+#   --locked="false" \
+#   --access-level="not_protected"
+
+
+before_script:
+  - hostname
+  - date
+
+stages:
+  - init
+  - common_errors
+  - typos
+
+situate:
+  stage: init
+  script:
+    - whoami
+    - pwd
+    - ls -al
+
+SpellCheck the Markdown Files:
+  stage: typos
+  allow_failure: true
+  script:
+    - curl -ks https://gitlab.sas.com/GEL/utilities/writing-content-in-markdown/-/raw/master/scripts/spell.checker.sh | bash
+
+# SpellCheck try 2:
+#   stage: typos
+#   image: tmaier/markdown-spellcheck
+#   before_script:
+#     - ls -al
+#   script:
+#     - hostname
+
+Find bad yaml extensions:
+  stage: common_errors
+  allow_failure: true
+  script:
+    - echo
+    - |
+        # try a loop here
+        for f1 in $(find  .  -name "*.yml" |  sort )
+        do
+          printf "\n The file $f1 has a .yml extension. It should be a .yaml.\n Failing this whole thing.\n\n"
+          exit 2
+        done
+
+Find files with missing logo:
+  stage: common_errors
+  script:
+    - |
+        curl -s https://gitlab.sas.com/GEL/utilities/writing-content-in-markdown/-/raw/master/scripts/confirm.gel.logo.sh | bash

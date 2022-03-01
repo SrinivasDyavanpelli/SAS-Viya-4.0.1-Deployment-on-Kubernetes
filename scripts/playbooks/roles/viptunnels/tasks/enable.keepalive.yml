@@ -1,0 +1,29 @@
+---
+- name: generate the keepalive script
+  become: yes
+  template:
+    src: vipKeepAlive.sh.j2
+    # dest: "/opt/RACE_Integration/vipKeepAlive.sh"
+    dest: "{{VirtualTunnel_folder}}/vipKeepAlive.sh"
+    mode: 0755
+  tags:
+    - keepalive
+    - viptunnels
+
+- name: cron the keepalive
+  become: yes
+  cron:
+    name: "Keepalive for tunnels"
+    minute: "*/1"
+    hour: "*"
+    # job: "/opt/RACE_Integration/vipKeepAlive.sh 2>&1"
+    job: "{{VirtualTunnel_folder}}/vipKeepAlive.sh 2>&1"
+  register: crontab
+  #failed_when: false
+  tags:
+    - keepalive
+    - viptunnels
+- debug: var=crontab
+  tags:
+    - keepalive
+    - viptunnels

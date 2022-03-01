@@ -1,0 +1,5 @@
+---
+host_file_to_read: /etc/hosts
+text_to_look_for: "-e 'sasviya' -e 'sascas' -e 'sashdp' -e 'sascdh' -e 'sasesp' -e 'sasdagnt' -e 'sasnode'"
+text_to_keep: "awk '{print ($2)}' | sort | uniq"
+# inventory_filename: tunnel.inv.ini

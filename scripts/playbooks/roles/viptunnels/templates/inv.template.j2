@@ -1,0 +1,39 @@
+## the host definitions first
+{% for item in ext_host_list %}
+{{item[0:item.find('.')]}} ansible_host={{item}}
+{% endfor %}
+
+{% for item in int_host_list %}
+{{item[0:item.find('.')]}} ansible_host={{item}}
+{% endfor %}
+
+# 2 groups to differentiate internal and external hosts
+[int]
+{% for item in int_host_list %}
+{{item[0:item.find('.')]}}
+{% endfor %}
+
+[ext]
+{% for item in ext_host_list %}
+{{item[0:item.find('.')]}}
+{% endfor %}
+
+#####################################################
+# This part of the inventory is for the OpenLDAP deployment
+####################################################
+[openldapserver]
+{{ansible_on_host}}
+
+[openldapclients:children]
+ext
+
+[openldapall:children]
+openldapserver
+openldapclients
+
+
+#####################################################
+# This part of the inventory is for the VIRK
+####################################################
+[sas-all:children]
+int

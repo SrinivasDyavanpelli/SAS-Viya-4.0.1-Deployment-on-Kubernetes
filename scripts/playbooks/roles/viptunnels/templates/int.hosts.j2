@@ -1,0 +1,27 @@
+# GEL: Keep the VIP Tunnels for Viya
+{% for item in int_host_list %}
+{% if "intviya" in item  %}
+{% set third_digit = 1 %}
+{% set fourth_digit = item[7:9] | int %}
+{% elif "intcas" in item  %}
+{% set third_digit = 2 %}
+{% set fourth_digit = item[6:8] | int %}
+{% elif "intcdh" in item  %}
+{% set third_digit = 3 %}
+{% set fourth_digit = item[6:8] | int %}
+{% elif "inthdp" in item  %}
+{% set third_digit = 4 %}
+{% set fourth_digit = item[6:8] | int %}
+{% elif "intesp" in item  %}
+{% set third_digit = 5 %}
+{% set fourth_digit = item[6:9] | int %}
+{% elif "intnode" in item  %}
+{% set third_digit = 6 %}
+{% set fourth_digit = item[7:9] | int %}
+{% else  %}
+{% set third_digit = 9 %}
+{% set fourth_digit = 9 %}
+{% endif %}
+192.168.{{third_digit}}.{{fourth_digit}} {{item}}.race.sas.com {{item}}
+{% endfor %}
+# GEL: Keep the VIP Tunnels for Viya
